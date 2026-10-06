@@ -8,6 +8,8 @@ Todo o gameplay e o salvamento funcionam no dispositivo. Não há backend, conta
 
 ## Começar a jogar
 
+Repositório no GitHub: [Htoledo30/sino-negro-codex](https://github.com/Htoledo30/sino-negro-codex). A publicação pelo GitHub Pages é executada automaticamente pelo workflow `Publicar Sino Negro` a cada envio à branch `main`. O endereço efetivamente confirmado está em `PUBLICACAO.md`.
+
 O endereço efetivamente publicado e a situação da hospedagem ficam em **PUBLICACAO.md**. Para executar localmente, use Node.js 20 ou superior; o desenvolvimento foi validado com Node.js 24.15.0:
 
 ```powershell
