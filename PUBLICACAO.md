@@ -4,7 +4,13 @@
 
 Repositório público: [Htoledo30/sino-negro-codex](https://github.com/Htoledo30/sino-negro-codex).
 
-A publicação no GitHub Pages está sendo ativada pelo workflow `Publicar Sino Negro`, que valida as regras, gera `dist/` e publica o jogo. O endereço definitivo será registrado aqui após a confirmação de sucesso.
+**Jogar no celular:** [https://htoledo30.github.io/sino-negro-codex/](https://htoledo30.github.io/sino-negro-codex/).
+
+**Publicação confirmada:** o workflow `Publicar Sino Negro` concluiu com `success`, incluindo testes, build e deploy. [Execução confirmada no GitHub Actions](https://github.com/Htoledo30/sino-negro-codex/actions/runs/37412378971). Commit de código publicado: `626357ef5654607d72b099e87e0ee2e6d8deb7cf`.
+
+Esse link é público e abre diretamente no Safari. Aguarde **OFFLINE PRONTO** e use **Compartilhar → Adicionar à Tela de Início**. Depois abra pelo ícone.
+
+O endereço é diferente da hospedagem anterior. Para levar uma campanha já existente, exporte o save pelo menu do endereço antigo e importe no GitHub Pages. O código aceita os saves das versões 1 e 2.
 
 ## Publicação anterior em Sites
 
