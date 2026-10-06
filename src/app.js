@@ -27,7 +27,10 @@ import {
   preview,
   price,
   discount,
+  runeFor,
+  ward,
 } from './engine.js';
+import { RUNES, COMPANIONS, ENCOUNTERS, LAYOUTS, OBJECTIVES } from './expansion.js';
 import { load, save, encode, decode, SAVE_KEY } from './storage.js';
 import { icon, figure, skyline } from './icons.js';
 import { setAudio, tone } from './audio.js';
@@ -102,7 +105,7 @@ function send(action) {
   return true;
 }
 function title() {
-  return `<div class="topline"><div><div class="brand">${icon('bell')} SINO NEGRO</div><div class="subbrand">VÉSPERA · UM RPG DE FERRO E SANGUE</div></div><button data-modal="menu" aria-label="Pausar e abrir menu">${icon('gear')}</button></div>`;
+  return `<div class="topline"><div><div class="brand">${icon('bell')} SINO NEGRO</div><div class="subbrand">VÉSPERA · A CONGREGAÇÃO · v2.0</div></div><button data-modal="menu" aria-label="Pausar e abrir menu">${icon('gear')}</button></div>`;
 }
 function hud() {
   const h = state.hero,
@@ -193,12 +196,14 @@ function route() {
     ex.depth
   ]
     .map((n, i) => {
-      const def = NODE_TYPES[n.type];
-      return `<button class="route-choice" data-action="node" data-id="${n.id}">${icon(def.icon)}<div><span class="route-number">ROTA ${String(i + 1).padStart(2, '0')}</span><strong>${def.name}</strong><p>${def.desc}</p></div></button>`;
+      const def = NODE_TYPES[n.type],
+        encounter = ENCOUNTERS[n.encounter];
+      const disclosed = ex.scouted.includes(ex.depth);
+      return `<button class="route-choice" data-action="node" data-id="${n.id}">${icon(def.icon)}<div><span class="route-number">ROTA ${String(i + 1).padStart(2, '0')} · ${def.name}</span><strong>${encounter?.name || def.name}</strong><p>${encounter?.desc || def.desc}</p>${encounter ? `<small class="encounter-preview">${LAYOUTS[encounter.layout].name} · ${OBJECTIVES[encounter.objective].name}${disclosed ? `<br>Formação: ${encounter.foes.map((id) => ENEMIES[id].name).join(' · ')}${n.type === 'elite' ? ' + reforço de elite' : ''}` : ''}</small>` : ''}</div></button>`;
     })
     .join(
       '',
-    )}</div>${resources()}<div class="hint">${state.meta.expeditions === 1 && ex.depth === 0 ? 'No combate, você tem duas ações. As casas vermelhas mostram ataques que ocorrerão ao encerrar o turno. Mova-se, interrompa ou prepare um aparo.' : 'Os espólios destacados só se tornam seguros quando você retorna. Experiência, equipamento e talentos já pertencem a você.'}</div><button class="full ghost" data-modal="retreat">${icon('exit', 'small')} Retirar-se com os espólios</button>`;
+    )}</div><div class="card scout-card"><h3>${icon('eye')} Reconhecimento</h3><p>${ex.scouted.includes(ex.depth) ? 'Formações reveladas. O confronto escolhido começa com 3 ações; os turnos seguintes têm 2.' : 'Gaste 1 luz para revelar as formações desta etapa e começar o confronto escolhido com 3 ações. A escuridão ainda pode trazer um inimigo extra.'}</p>${!ex.scouted.includes(ex.depth) ? button('Reconhecer · 1 luz', `data-action="scout" ${ex.light < 1 ? 'disabled' : ''}`) : ''}</div>${resources()}<div class="hint">${state.meta.expeditions === 1 && ex.depth === 0 ? 'No combate, você tem duas ações. As casas vermelhas mostram ataques que ocorrerão ao encerrar o turno. Mova-se, interrompa ou prepare um aparo.' : 'Os espólios destacados só se tornam seguros quando você retorna. Experiência, equipamento e talentos já pertencem a você.'}</div><button class="full ghost" data-modal="retreat">${icon('exit', 'small')} Retirar-se com os espólios</button>`;
 }
 function room() {
   const r = state.room;
@@ -301,9 +306,12 @@ function board() {
         threat = threatened(state, pos).length > 0,
         valid = selected && SKILLS[selected].target !== 'self' && targetValid(state, selected, pos),
         chosen = target?.x === x && target?.y === y;
+      const object = c.objective.objects.find((o) => o.active && o.x === x && o.y === y);
       const movement = c.enemies.some(
         (e) =>
-          e.hp > 0 && e.intent?.kind === 'move' && e.intent.dest.x === x && e.intent.dest.y === y,
+          e.hp > 0 &&
+          ((e.intent?.dest?.x === x && e.intent.dest.y === y) ||
+            (e.intent?.moveAfter?.x === x && e.intent.moveAfter.y === y)),
       );
       const health = hero ? state.hero.hp : e?.hp,
         max = hero ? stats(state).maxHp : e?.maxHp;
@@ -315,9 +323,9 @@ function board() {
           : hero && p.bleed
             ? `↓${p.bleed}`
             : '';
-      const label = `Casa ${x + 1},${y + 1} · ${hero ? 'você' : e ? ENEMIES[e.kind].name : tile === 'wall' ? 'pilar' : tile === 'pit' ? 'abismo' : tile === 'oil' ? 'óleo' : tile === 'fire' ? 'fogo' : tile === 'blood' ? 'sangue' : 'pedra'}${threat ? ' · ameaçada' : ''}${e ? ` · ${e.hp} vida` : ''}${valid ? ' · alvo válido' : ''}`;
+      const label = `Casa ${x + 1},${y + 1} · ${hero ? 'você' : e ? ENEMIES[e.kind].name : tile === 'wall' ? 'pilar' : tile === 'pit' ? 'abismo' : tile === 'oil' ? 'óleo' : tile === 'fire' ? 'fogo' : tile === 'blood' ? 'sangue' : 'pedra'}${object ? ` · ${OBJECTIVES[c.objective.kind].name}${object.hp ? ` · ${object.hp} vida` : ''}` : ''}${threat ? ' · ameaçada' : ''}${e ? ` · ${e.hp} vida` : ''}${valid ? ' · alvo válido' : ''}`;
       tiles.push(
-        `<button class="tile ${tile} ${hero ? 'hero' : ''} ${e ? 'enemy' : ''} ${e && ENEMIES[e.kind].boss ? 'boss' : ''} ${threat ? 'threat' : ''} ${movement ? 'movement' : ''} ${valid ? 'valid' : ''} ${chosen ? 'chosen' : ''}" data-tile="${key(x, y)}" aria-label="${esc(label)}" aria-pressed="${!!chosen}">${unit ? figure(unit) : ''}${conditions ? `<span class="unit-status">${conditions}</span>` : ''}${e?.armor ? `<span class="unit-label">${e.armor}◇</span>` : ''}${unit ? `<div class="unit-hp"><span style="width:${(health / max) * 100}%"></span></div>` : ''}</button>`,
+        `<button class="tile ${tile} ${hero ? 'hero' : ''} ${e ? 'enemy' : ''} ${e && ENEMIES[e.kind].boss ? 'boss' : ''} ${threat ? 'threat' : ''} ${movement ? 'movement' : ''} ${valid ? 'valid' : ''} ${chosen ? 'chosen' : ''} ${object ? 'objective-tile' : ''}" data-tile="${key(x, y)}" aria-label="${esc(label)}" aria-pressed="${!!chosen}">${unit ? figure(unit) : ''}${object ? `<span class="object-marker">${icon(OBJECTIVES[c.objective.kind].icon, 'small')}${object.hp ? `<b>${object.hp}</b>` : ''}</span>` : ''}${conditions ? `<span class="unit-status">${conditions}</span>` : ''}${e?.armor ? `<span class="unit-label">${e.armor}◇${ward(state, e) ? '+3' : ''}</span>` : ''}${unit ? `<div class="unit-hp"><span style="width:${(health / max) * 100}%"></span></div>` : ''}</button>`,
       );
     }
   return `<div class="board-frame"><div class="board" role="group" aria-label="Tabuleiro tático de seis por seis">${tiles.join('')}</div></div><div class="legend"><span><i></i>Ataque anunciado</span><span><i class="path"></i>Destino inimigo</span><span><i class="block"></i>Pilar bloqueia</span></div>`;
@@ -341,7 +349,13 @@ function actionInfo() {
 }
 function controls() {
   const c = state.combat,
-    quick = ['move', 'strike', 'guard', state.hero.skills[0], 'flask'];
+    quick = [
+      'move',
+      'strike',
+      'guard',
+      availableSkills(state).includes('interact') ? 'interact' : state.hero.skills[0],
+      'flask',
+    ];
   return `${actionInfo()}<div class="actions">${availableSkills(state)
     .map((id) => {
       const sk = SKILLS[id],
@@ -354,11 +368,35 @@ function controls() {
     })
     .join(
       '',
-    )}<button class="ability more-skills" data-modal="arsenal">${icon('chest')}<strong>Arsenal</strong><small>Todas</small></button></div><button class="turn-button" data-action="endTurn"><div><strong>Encerrar turno</strong><small>Inimigos agem · +3 vigor${c.actions === 0 ? ' +2 por aguardar' : ''}</small></div>${icon('arrow')}</button>${c.ap === 0 ? '<div class="hint exhausted">Duas ações gastas. Encerre o turno.</div>' : ''}`;
+    )}<button class="ability more-skills" data-modal="arsenal">${icon('chest')}<strong>Arsenal</strong><small>${state.hero.companion && !c.companionUsed ? 'Ordem aliada' : 'Todas'}</small></button></div><button class="turn-button" data-action="endTurn"><div><strong>Encerrar turno</strong><small>Inimigos agem · +3 vigor${c.actions === 0 ? ' +2 por aguardar' : ''}</small></div>${icon('arrow')}</button>${c.ap === 0 ? '<div class="hint exhausted">Ações gastas. Encerre o turno.</div>' : ''}`;
+}
+function objectiveStatus() {
+  const c = state.combat,
+    o = c.objective,
+    def = OBJECTIVES[o.kind];
+  let progress = '';
+  if (o.kind === 'ritual')
+    progress = `${o.objects.filter((p) => !p.active).length} / 2 âncoras rompidas`;
+  if (o.kind === 'rescue')
+    progress = o.objects[0].active
+      ? `Prisioneiro: ${o.objects[0].hp} vida`
+      : o.objects[0].hp
+        ? 'Prisioneiro salvo'
+        : 'Prisioneiro perdido';
+  if (o.kind === 'supplies')
+    progress = o.objects[0].active ? 'Baú ainda fechado' : 'Provisões recolhidas';
+  if (o.kind === 'siege')
+    progress =
+      c.turn < 6
+        ? 'Porta abre no turno 6 · reforços nos turnos 3 e 5'
+        : 'Porta aberta · use Interagir em 3,6';
+  return `<div class="objective-status"><div>${icon(def.icon)}<strong>${def.name}</strong><span>${progress}</span></div>${o.kind !== 'eliminate' ? `<details><summary>Como cumprir</summary><p>${def.desc}</p></details>` : ''}${c.player.root ? '<small class="gold">Correntes: próximo movimento custa +2 vigor.</small>' : ''}${state.hero.companion ? `<small>Companhia: ${COMPANIONS[state.hero.companion].name} · ${c.companionUsed ? 'ordem já usada' : 'ordem disponível no Arsenal'}</small>` : ''}</div>`;
 }
 function combat() {
   const c = state.combat;
-  return `<div class="combat-layout"><div class="combat-top"><div><div class="eyebrow">${c.type === 'boss' ? 'GUARDIÃO DO SELO' : c.type === 'elite' ? 'CAÇADA · RISCO ALTO' : 'CONFRONTO'} · TURNO ${c.turn}</div><h2>O próximo golpe é visível</h2></div><div class="ap" aria-label="${c.ap} ações restantes">${Array.from({ length: 2 }, (_, i) => `<i class="ap-dot ${i < c.ap ? '' : 'spent'}"></i>`).join('')} <span>${c.ap} / 2</span></div></div><div class="board-area">${board()}${intents()}</div><div class="control-area">${controls()}</div><div class="combat-log" aria-live="polite"><div class="eyebrow">ÚLTIMOS ACONTECIMENTOS</div>${state.log
+  const capacity =
+    c.turn === 1 && state.expedition.scouted.includes(state.expedition.depth) ? 3 : 2;
+  return `<div class="combat-layout"><div class="combat-top"><div><div class="eyebrow">${c.type === 'boss' ? 'GUARDIÃO DO SELO' : c.type === 'elite' ? 'CAÇADA · RISCO ALTO' : 'CONFRONTO'} · TURNO ${c.turn}</div><h2>${ENCOUNTERS[c.encounter]?.name || 'O próximo golpe é visível'}</h2></div><div class="ap" aria-label="${c.ap} ações restantes">${Array.from({ length: capacity }, (_, i) => `<i class="ap-dot ${i < c.ap ? '' : 'spent'}"></i>`).join('')} <span>${c.ap} / ${capacity}</span></div></div><div class="board-area">${objectiveStatus()}${board()}${intents()}</div><div class="control-area">${controls()}</div><div class="combat-log" aria-live="polite"><div class="eyebrow">ÚLTIMOS ACONTECIMENTOS</div>${state.log
     .slice(-5)
     .map((l) => `<p class="${l.type}">${esc(l.text)}</p>`)
     .join('')}</div></div>`;
@@ -408,8 +446,9 @@ function gear() {
     .join('')}</div><div class="section-head"><h2>Arsenal</h2></div>${h.ownedWeapons
     .map((id) => {
       const w = WEAPONS[id],
-        up = h.upgrades[id] || 0;
-      return `<div class="card equipment-item">${icon(w.icon)}<div><h3>${w.name} ${up ? `+${up}` : ''}</h3><p>${w.desc}</p><div class="item-stats">${w.damage + up * 2 + Math.floor((h.level - 1) / 2)} dano · alcance ${w.range} · ${w.cost} vigor</div>${h.weapon === id ? '<div class="quest-progress">EQUIPADA</div>' : button('Equipar', `data-action="equip" data-kind="weapon" data-id="${id}" ${state.combat ? 'disabled' : ''}`)}</div></div>`;
+        up = h.upgrades[id] || 0,
+        rune = RUNES[h.runes[id] || 'none'];
+      return `<div class="card equipment-item">${icon(w.icon)}<div><h3>${w.name} ${up ? `+${up}` : ''}</h3><p>${w.desc}</p><div class="item-stats">${w.damage + up * 2 + Math.floor((h.level - 1) / 2) + rune.damage} dano · alcance ${w.range} · ${w.cost + rune.vigor} vigor</div><small class="gold">${rune.name}</small>${h.weapon === id ? '<div class="quest-progress">EQUIPADA</div>' : button('Equipar', `data-action="equip" data-kind="weapon" data-id="${id}" ${state.combat ? 'disabled' : ''}`)}</div></div>`;
     })
     .join(
       '',
@@ -496,7 +535,7 @@ function help() {
     ],
     [
       'Armadura, sangue, fogo',
-      'Armadura reduz golpes, até um mínimo de 1 dano. Sangramento ignora armadura, causa seu valor em dano antes das intenções e perde 1 intensidade por turno. Fogo reduz a armadura pela metade no impacto e aplica 2 turnos de queimadura (3 dano por turno). Você sofre 5 dano ao entrar no fogo e ao encerrar o turno nele. Inimigos sofrem 5 ao entrar, além da Queimadura.',
+      'Armadura reduz golpes, até um mínimo de 1 dano. Sangramento ignora armadura, causa seu valor em dano antes das intenções e perde 1 intensidade por turno. Fogo reduz a armadura pela metade no impacto e aplica 2 turnos de queimadura (3 dano por turno). Você sofre 5 dano ao entrar no fogo e ao encerrar o turno nele. Inimigos sofrem 5 ao entrar ou permanecer no fogo após agir, além da Queimadura. Quando possível, anunciam o destino da fuga.',
     ],
     [
       'O terreno é uma arma',
@@ -530,8 +569,73 @@ function help() {
     .map(([name, text]) => `<div class="card"><h3>${name}</h3><p>${text}</p></div>`)
     .join('')}`;
 }
+function companions() {
+  const h = state.hero;
+  return `<section class="companions"><div class="section-head"><div><div class="eyebrow">UMA COMPANHIA · UMA ORDEM POR COMBATE</div><h2>Quem volta com você</h2></div>${icon('chain')}</div><p class="muted">Escolha no Ossuário. A ordem aparece no Arsenal e usa ações, sem adicionar outra peça ao tabuleiro.</p>${Object.entries(
+    COMPANIONS,
+  )
+    .map(
+      ([id, def]) =>
+        `<div class="card equipment-item">${icon(def.icon)}<div><h3>${def.name}</h3><p>${def.desc}</p>${h.companion === id ? '<div class="quest-progress">ACOMPANHANDO SUA EXPEDIÇÃO</div>' : h.roster.includes(id) ? button('Escolher companhia', `data-action="companion" data-id="${id}" ${state.screen !== 'hub' ? 'disabled' : ''}`) : `<div class="quest-progress">CONTRATO: ${CONTRACTS[def.require].name} · ${state.quests[def.require]} / ${CONTRACTS[def.require].target}</div>`}</div></div>`,
+    )
+    .join(
+      '',
+    )}${h.companion ? button('Seguir sozinho', `data-action="companion" data-id="none" ${state.screen !== 'hub' ? 'disabled' : ''}`, 'ghost full') : ''}</section>`;
+}
+function engraving(craft = false) {
+  const current = runeFor(state),
+    h = state.hero;
+  const ids = craft
+    ? Object.keys(RUNES).filter((id) => id !== 'none' && !h.ownedRunes.includes(id))
+    : ['none', ...h.ownedRunes];
+  return `<section class="runes"><div class="section-head"><div><div class="eyebrow">UMA GRAVAÇÃO POR ARMA</div><h2>${craft ? 'A mesa dos nomes' : 'Gravações conhecidas'}</h2></div>${icon('star')}</div><div class="hint">${WEAPONS[h.weapon].name}: ${RUNES[current].name}. Cada arma guarda sua própria gravação. Runas conhecidas podem ser reutilizadas gratuitamente entre confrontos.</div>${
+    ids
+      .map((id) => {
+        const rune = RUNES[id];
+        return `<div class="card"><h3>${rune.name}</h3><p>${rune.desc}</p>${current === id && !craft ? '<div class="quest-progress">GRAVADA NESTA ARMA</div>' : button(craft ? `Criar e gravar · ${rune.cost.bones} ossos · ${rune.cost.scrap} sucata${rune.cost.ichor ? ` · ${rune.cost.ichor} ícor` : ''}` : 'Gravar nesta arma', `data-action="${craft ? 'engrave' : 'rune'}" data-id="${id}" ${state.combat ? 'disabled' : ''}`, 'full')}</div>`;
+      })
+      .join('') || '<p class="muted">Todas as seis runas foram aprendidas.</p>'
+  }${!craft && state.screen === 'hub' ? button('Criar runas na forja', 'data-tab="forge"', 'primary full') : ''}</section>`;
+}
+function bestiary() {
+  return `<section class="bestiary"><div class="section-head"><div><div class="eyebrow">SÓ O ENCONTRO REVELA O NOME</div><h2>O livro dos mortos</h2></div>${icon('skull')}</div>${Object.entries(
+    ENEMIES,
+  )
+    .map(([id, def]) =>
+      state.codex[id]
+        ? `<details class="card bestiary-entry"><summary>${figure(def.glyph)}<span><strong>${def.name}</strong><small>${state.codex[id].seen} encontros · ${state.codex[id].kills} mortes</small></span></summary><p>${def.desc}</p><div class="item-stats">Base: ${def.hp} vida · ${def.damage} dano · ${def.armor} armadura. Distrito, elite e Vigília aumentam o perigo.</div></details>`
+        : `<div class="bestiary-unknown">${icon('skull', 'small')} Nome ainda desconhecido</div>`,
+    )
+    .join('')}</section>`;
+}
+function expansionHelp() {
+  return `<div class="section-head"><h2>A Congregação</h2></div>${[
+    [
+      'Objetivos no tabuleiro',
+      'Interagir custa 1 ação e 1 vigor. Use adjacente aos símbolos dourados: âncoras encerram o ritual quando ambas se rompem; jaulas libertam Ivo; baús dão bálsamo e bomba. Resgate e provisões precisam acontecer antes do último inimigo morrer. Ataques de área dos dois lados e fogo podem matar o prisioneiro.',
+    ],
+    [
+      'Resistir e sair',
+      'Em cercos, matar todos não encerra a batalha. Reforços chegam nos turnos 3 e 5. A partir do turno 6, fique na saída ou adjacente a ela e use Interagir. Você pode sair com inimigos vivos; recebe experiência só pelos inimigos realmente mortos e pelo objetivo.',
+    ],
+    [
+      'Reconhecimento',
+      'Entre encontros, 1 luz revela as formações e concede 3 ações no primeiro turno do próximo combate dessa etapa. As escolhas permanecem fixas. Os outros turnos têm 2 ações. Reconhecer uma etapa de abrigo não leva o bônus à etapa seguinte.',
+    ],
+    [
+      'Gravações e companhia',
+      'Crie seis runas na forja, cada uma com efeito e custo próprios. Cada arma guarda uma runa; trocar uma runa conhecida é grátis entre confrontos. Escolha Mara, Ivo ou Sibila no Ossuário após seus contratos. Uma única ordem por combate fica no Arsenal.',
+    ],
+    [
+      'Suporte inimigo',
+      'Portadores reduzem em 3 o dano físico contra aliados adjacentes; fogo e ritos atravessam. Costureiras curam o aliado anunciado e podem ser interrompidas. Penitentes detonam e morrem. Correntes aumentam em 2 o custo do próximo deslocamento. Aparos completos impedem efeitos do golpe.',
+    ],
+  ]
+    .map(([name, desc]) => `<div class="card"><h3>${name}</h3><p>${desc}</p></div>`)
+    .join('')}`;
+}
 function mainScreen() {
-  if (state.screen === 'hub') return hub();
+  if (state.screen === 'hub') return hub() + companions();
   if (state.screen === 'route') return route();
   if (state.screen === 'combat') return combat();
   if (state.screen === 'room') return room();
@@ -544,7 +648,7 @@ function render() {
     renderModal();
     return;
   }
-  app.innerHTML = `<main class="shell ${state.screen === 'combat' && tab === 'map' ? 'combat-shell' : ''}">${title()}${hud()}${tab === 'gear' ? gear() : tab === 'talents' ? talents() : tab === 'journal' ? journal() : tab === 'help' ? help() : tab === 'forge' ? forge() : mainScreen()}</main>${nav()}`;
+  app.innerHTML = `<main class="shell ${state.screen === 'combat' && tab === 'map' ? 'combat-shell' : ''}">${title()}${hud()}${tab === 'gear' ? gear() + engraving() + companions() : tab === 'talents' ? talents() : tab === 'journal' ? journal() + bestiary() : tab === 'help' ? help() + expansionHelp() : tab === 'forge' ? forge() + engraving(true) : mainScreen()}</main>${nav()}`;
   renderModal();
 }
 function openModal(id, data = null) {
@@ -561,7 +665,7 @@ function closeModal() {
   if (lastFocus?.isConnected) lastFocus.focus({ preventScroll: true });
 }
 function menuContent() {
-  return `<p>${state ? 'Partida pausada. Nada acontece enquanto você estiver aqui. Seu progresso é gravado após cada ação.' : 'Você pode importar uma campanha ou iniciar uma nova.'}</p>${state ? `<div class="hint ${saveError ? 'danger-hint' : ''}">${saveError ? 'O armazenamento falhou. Exporte sua campanha agora.' : `Salvo no dispositivo · ${state.lastSave ? new Date(state.lastSave).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : 'agora'}`}</div><button class="menu-button" data-export><span class="row">${icon('book')} Exportar campanha</span><small>Arquivo .json</small></button><button class="menu-button" data-audio><span class="row">${icon('sound')} Áudio</span><small>${state.options.sound ? 'Ativado' : 'Silenciado'}</small></button><button class="menu-button" data-motion><span class="row">${icon('eye')} Animações</span><small>${state.options.motion ? 'Ativadas' : 'Reduzidas'}</small></button>` : ''}<button class="menu-button" data-modal="import"><span class="row">${icon('chest')} Importar campanha</span><small>Restaurar arquivo</small></button><button class="menu-button" data-modal="install"><span class="row">${icon('bell')} Instalar no iPhone</span><small>${offlineReady ? 'Offline pronto' : 'Preparando offline'}</small></button>${waitingWorker ? '<button class="menu-button primary" data-update>Salvar e instalar atualização</button>' : ''}${state ? '<button class="menu-button danger" data-modal="reset">Começar outra campanha</button>' : ''}<p class="menu-note">SINO NEGRO v1.0 · Sem rede para o gameplay. O modo offline exige um primeiro carregamento completo por HTTPS ou localhost. Não há cronômetro de combate.</p>`;
+  return `<p>${state ? 'Partida pausada. Nada acontece enquanto você estiver aqui. Seu progresso é gravado após cada ação.' : 'Você pode importar uma campanha ou iniciar uma nova.'}</p>${state ? `<div class="hint ${saveError ? 'danger-hint' : ''}">${saveError ? 'O armazenamento falhou. Exporte sua campanha agora.' : `Salvo no dispositivo · ${state.lastSave ? new Date(state.lastSave).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : 'agora'}`}</div><button class="menu-button" data-export><span class="row">${icon('book')} Exportar campanha</span><small>Arquivo .json</small></button><button class="menu-button" data-audio><span class="row">${icon('sound')} Áudio</span><small>${state.options.sound ? 'Ativado' : 'Silenciado'}</small></button><button class="menu-button" data-motion><span class="row">${icon('eye')} Animações</span><small>${state.options.motion ? 'Ativadas' : 'Reduzidas'}</small></button>` : ''}<button class="menu-button" data-modal="import"><span class="row">${icon('chest')} Importar campanha</span><small>Restaurar arquivo</small></button><button class="menu-button" data-modal="install"><span class="row">${icon('bell')} Instalar no iPhone</span><small>${offlineReady ? 'Offline pronto' : 'Preparando offline'}</small></button>${waitingWorker ? '<button class="menu-button primary" data-update>Salvar e instalar atualização</button>' : ''}${state ? '<button class="menu-button danger" data-modal="reset">Começar outra campanha</button>' : ''}<p class="menu-note">SINO NEGRO v2.0 · A Congregação · Sem rede para o gameplay. O modo offline exige um primeiro carregamento completo por HTTPS ou localhost. Não há cronômetro de combate.</p>`;
 }
 function renderModal() {
   if (!modal) {
@@ -747,6 +851,8 @@ document.addEventListener('click', (event) => {
     }
     const e = enemyAt(state, pos);
     if (e) openModal('enemy', e.id);
+    else if (state.combat.objective.objects.some((o) => o.active && o.x === x && o.y === y))
+      toast(OBJECTIVES[state.combat.objective.kind].desc);
     else
       toast(
         tileAt(state, pos) === 'fire'
@@ -779,7 +885,9 @@ document.addEventListener('click', (event) => {
     const id =
       el.dataset.action === 'room' && /^\d+$/.test(el.dataset.id)
         ? Number(el.dataset.id)
-        : el.dataset.id;
+        : el.dataset.action === 'companion' && el.dataset.id === 'none'
+          ? null
+          : el.dataset.id;
     send({ type: el.dataset.action, id, kind: el.dataset.kind });
     return;
   }

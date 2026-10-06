@@ -1,5 +1,5 @@
-const CACHE='sino-negro-v1.0.0';
-const SHELL=['./','./index.html','./style.css','./manifest.webmanifest','./src/app.js','./src/content.js','./src/engine.js','./src/icons.js','./src/storage.js','./src/audio.js','./src/webmcp.js','./assets/icon.svg','./assets/icon-192.png','./assets/icon-512.png','./assets/icon-maskable.png','./assets/apple-touch-icon.png'];
+const CACHE='sino-negro-v2.0.0';
+const SHELL=['./','./index.html','./style.css','./manifest.webmanifest','./src/app.js','./src/content.js','./src/expansion.js','./src/engine.js','./src/icons.js','./src/storage.js','./src/audio.js','./src/webmcp.js','./assets/icon.svg','./assets/icon-192.png','./assets/icon-512.png','./assets/icon-maskable.png','./assets/apple-touch-icon.png'];
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(SHELL))));
 self.addEventListener('activate',event=>event.waitUntil((async()=>{for(const name of await caches.keys())if(name.startsWith('sino-negro-')&&name!==CACHE)await caches.delete(name);await self.clients.claim();})()));
 self.addEventListener('message',event=>{if(event.data==='ACTIVATE_UPDATE')self.skipWaiting();});

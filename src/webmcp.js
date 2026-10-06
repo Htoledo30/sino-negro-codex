@@ -18,6 +18,9 @@ export function registerGameTools(read, perform) {
             turn: s.combat.turn,
             ap: s.combat.ap,
             player: s.combat.player,
+            objective: s.combat.objective,
+            companion: s.hero.companion,
+            companionUsed: s.combat.companionUsed,
             enemies: s.combat.enemies
               .filter((e) => e.hp > 0)
               .map((e) => ({

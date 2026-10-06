@@ -52,7 +52,10 @@ function actions(s) {
 const visited = new Map();
 function pathDistance(s) {
   const p = s.combat.player,
-    enemies = s.combat.enemies.filter((e) => e.hp > 0),
+    enemies =
+      s.combat.objective.kind === 'siege' && s.combat.turn >= 6
+        ? s.combat.objective.objects.filter((o) => o.active)
+        : s.combat.enemies.filter((e) => e.hp > 0),
     queue = [{ ...p, d: 0 }],
     seen = new Set();
   while (queue.length) {
@@ -98,7 +101,7 @@ function score(s, initial) {
     debuff -
     s.hero.corruption * 2 +
     (s.meta.kills - initial.meta.kills) * 16 -
-    near * 2 -
+    near * (c.objective.kind === 'siege' && c.turn >= 6 ? 20 : 2) -
     c.player.bleed * 5 +
     (c.player.counter ? 4 : 0) -
     Math.min(10, repeat) * 4

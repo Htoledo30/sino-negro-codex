@@ -1,4 +1,5 @@
 const paths = {
+  hand: 'M8 12V6a2 2 0 0 1 4 0v6-8a2 2 0 0 1 4 0v8-5a2 2 0 0 1 4 0v8c0 5-3 7-7 7H9l-6-7a2 2 0 0 1 3-2l2 2',
   blade: 'M19 3 8 14l-3-1-2 2 6 6 2-2-1-3L21 5V3h-2ZM8 14l2 2M4 20l-1 1',
   shield: 'M12 2 3 6v7c0 5 9 9 9 9s9-4 9-9V6L12 2Zm0 4v12M7 10h10',
   hammer: 'm14 3 7 7-4 4-7-7 4-4ZM12 12 3 21M4 18l2 2',
@@ -32,6 +33,14 @@ export function icon(name, cls = '') {
   return `<svg class="icon ${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${paths[name] || paths.skull}"/></svg>`;
 }
 const figures = {
+  bulwark:
+    'M24 4h14l4 14-20 2 2-16ZM25 24h18l7 17-10 3 1 15h-8l-4-16-4 16h-8l4-25 4-10ZM3 11h19v39H3V11ZM8 16h9v4H8Zm4 7v15m-5-9h10M53 8v45m-5-34h10',
+  stitcher:
+    'M27 4h12l3 13-18 4 3-17ZM25 24l13-2 7 34H15l10-32ZM25 27 8 34l3 5 17-8M38 26l13 13 4-4-14-14M4 31h17v3H4ZM47 39l11-14 2 2-11 14M29 44h9v4h-9Z',
+  bomber:
+    'M24 3h14l4 16-21 1 3-17ZM24 23h17l9 19-10 3 4 14h-8l-6-15-5 15h-8l5-20-13 6-5-6 20-16ZM23 29h17v14H23V29ZM31 23v-6h5l-2-8 5-5 4 2-6 6M8 36l5-9 6 3-8 10',
+  gaoler:
+    'M25 5h13l3 14-18 2 2-16ZM23 25l17-3 6 19-9 3 5 15h-8l-7-16-5 16h-8l5-25 4-9ZM20 28 9 37l4 4 13-10M40 26l12 5-2 5-13-4M49 34l4 6-4 6 5 5-3 5 6 5M5 38h10v8H5v-8Zm2 2v4h6v-4',
   player:
     'M29 5h6l3 7-5 5-7-4 3-8ZM26 19l12-2 7 21-9 3-2 18h-6l-1-20-8-2 7-18ZM40 22l9-5 4 3-9 13M21 22l-6 13 2 4 9-10M51 3v41m-3-38h6',
   husk: 'M24 6h12l4 11-8 5-10-8 2-8ZM22 24l13-2 7 17-10 6 4 14h-7l-4-18-7 16-5-2 7-23-4-5-6 15-5-2 11-20 6 4Z',

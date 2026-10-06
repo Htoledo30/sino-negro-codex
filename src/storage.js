@@ -1,4 +1,4 @@
-import { validateSave } from './engine.js';
+import { validateSave, migrateSave } from './engine.js';
 export const SAVE_KEY = 'sino-negro-save-v1',
   BACKUP_KEY = 'sino-negro-backup-v1';
 function hash(text) {
@@ -19,7 +19,7 @@ export function decode(raw) {
     hash(v.payload) !== v.checksum
   )
     throw new Error('Arquivo de save inválido ou incompleto.');
-  const s = JSON.parse(v.payload);
+  const s = migrateSave(JSON.parse(v.payload));
   if (!validateSave(s)) throw new Error('Este save não é compatível ou está danificado.');
   return s;
 }

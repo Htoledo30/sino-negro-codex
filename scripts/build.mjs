@@ -14,6 +14,7 @@ for (const file of [
   'index.html',
   'style.css',
   'manifest.webmanifest',
+  'sw.js',
   ...(await readdir(path.join(root, 'src'))).sort().map((f) => 'src/' + f),
   ...(await readdir(path.join(root, 'assets'))).sort().map((f) => 'assets/' + f),
 ])
@@ -22,8 +23,8 @@ const fingerprint = digest.digest('hex').slice(0, 12);
 await writeFile(
   path.join(dest, 'sw.js'),
   (await readFile(path.join(root, 'sw.js'), 'utf8')).replace(
-    "const CACHE='sino-negro-v1.0.0'",
-    `const CACHE='sino-negro-v1.0.0-${fingerprint}'`,
+    /const CACHE\s*=\s*['"][^'"]+['"]/,
+    `const CACHE='sino-negro-v2.0.0-${fingerprint}'`,
   ),
 );
 await writeFile(path.join(dest, '.nojekyll'), '');

@@ -1,0 +1,290 @@
+{
+  "version": 1,
+  "rng": 3866553865,
+  "sequence": 4,
+  "screen": "combat",
+  "log": [
+    {
+      "text": "Ossuário alcançado. Escolha uma rota. Menus não consomem tempo.",
+      "type": "info",
+      "seq": 1
+    },
+    {
+      "text": "Expedição: As Valas. Retirar-se entre encontros deposita todos os espólios.",
+      "type": "info",
+      "seq": 2
+    },
+    {
+      "text": "O silêncio acaba. Leia as intenções antes de agir.",
+      "type": "bad",
+      "seq": 3
+    },
+    {
+      "text": "Você muda de posição.",
+      "type": "info",
+      "seq": 4
+    }
+  ],
+  "journal": [
+    "O sino tocou treze vezes. Na última, os mortos responderam. Você acordou entre os que não tinham língua.",
+    "Na vala comum, os mortos foram empilhados de pé. O Açougueiro costura os que tentam sair. Sua primeira língua está pendurada no portão."
+  ],
+  "hero": {
+    "name": "Campanha antiga",
+    "origin": "guard",
+    "level": 1,
+    "xp": 0,
+    "points": 1,
+    "hp": 50,
+    "vigor": 8,
+    "wounds": 0,
+    "corruption": 0,
+    "weapon": "sword",
+    "armor": "rags",
+    "relic": "none",
+    "ownedWeapons": ["sword"],
+    "ownedArmor": ["rags"],
+    "ownedRelics": [],
+    "upgrades": {},
+    "talents": ["sentinel"],
+    "skills": ["bash"]
+  },
+  "stash": {
+    "bones": 30,
+    "scrap": 4,
+    "ichor": 0
+  },
+  "supplies": {
+    "flask": 3,
+    "oil": 1,
+    "bomb": 1
+  },
+  "seals": [],
+  "flags": {
+    "entered-gutters": true
+  },
+  "quests": {
+    "rescue": 1,
+    "relic": 0,
+    "hunt": 0
+  },
+  "claimed": [],
+  "expedition": {
+    "district": "gutters",
+    "depth": 0,
+    "routes": [
+      [
+        {
+          "id": "0-0",
+          "type": "battle",
+          "seed": 55339235
+        },
+        {
+          "id": "0-1",
+          "type": "event",
+          "seed": 267764925
+        }
+      ],
+      [
+        {
+          "id": "1-0",
+          "type": "elite",
+          "seed": 399243124
+        },
+        {
+          "id": "1-1",
+          "type": "event",
+          "seed": 37642291
+        }
+      ],
+      [
+        {
+          "id": "2-0",
+          "type": "camp",
+          "seed": 824298762
+        },
+        {
+          "id": "2-1",
+          "type": "battle",
+          "seed": 929643877
+        },
+        {
+          "id": "2-2",
+          "type": "event",
+          "seed": 399859621
+        }
+      ],
+      [
+        {
+          "id": "3-0",
+          "type": "elite",
+          "seed": 690603588
+        },
+        {
+          "id": "3-1",
+          "type": "merchant",
+          "seed": 325391682
+        }
+      ],
+      [
+        {
+          "id": "4-0",
+          "type": "elite",
+          "seed": 856182226
+        },
+        {
+          "id": "4-1",
+          "type": "camp",
+          "seed": 430394281
+        },
+        {
+          "id": "4-2",
+          "type": "merchant",
+          "seed": 150821259
+        }
+      ],
+      [
+        {
+          "id": "5-0",
+          "type": "camp",
+          "seed": 850491384
+        },
+        {
+          "id": "5-1",
+          "type": "elite",
+          "seed": 881271864
+        },
+        {
+          "id": "5-2",
+          "type": "cache",
+          "seed": 571404249
+        }
+      ],
+      [
+        {
+          "id": "6-0",
+          "type": "boss",
+          "seed": 98460237
+        }
+      ]
+    ],
+    "bag": {
+      "bones": 0,
+      "scrap": 0,
+      "ichor": 0
+    },
+    "light": 8,
+    "modifier": {
+      "id": "normal",
+      "name": "Noite sem lua",
+      "desc": "Nenhuma regra adicional."
+    },
+    "vigil": 0,
+    "seen": ["battle"],
+    "recoverable": false
+  },
+  "combat": {
+    "type": "battle",
+    "turn": 1,
+    "ap": 1,
+    "player": {
+      "x": 3,
+      "y": 5,
+      "bleed": 0,
+      "guard": 0,
+      "counter": false
+    },
+    "enemies": [
+      {
+        "id": "e2-1-0",
+        "kind": "hound",
+        "x": 2,
+        "y": 1,
+        "hp": 14,
+        "maxHp": 14,
+        "armor": 0,
+        "damage": 6,
+        "bleed": 0,
+        "burn": 0,
+        "stun": 0,
+        "intent": {
+          "kind": "move",
+          "label": "Correr · 2 casas",
+          "dest": {
+            "x": 2,
+            "y": 3
+          },
+          "cells": [
+            {
+              "x": 2,
+              "y": 3
+            }
+          ],
+          "damage": 0
+        },
+        "rewarded": false,
+        "blockedCharge": false
+      },
+      {
+        "id": "e2-1-1",
+        "kind": "brute",
+        "x": 4,
+        "y": 0,
+        "hp": 34,
+        "maxHp": 34,
+        "armor": 1,
+        "damage": 13,
+        "bleed": 0,
+        "burn": 0,
+        "stun": 0,
+        "intent": {
+          "kind": "move",
+          "label": "Aproximar · 1 casa",
+          "dest": {
+            "x": 3,
+            "y": 0
+          },
+          "cells": [
+            {
+              "x": 3,
+              "y": 0
+            }
+          ],
+          "damage": 0
+        },
+        "rewarded": false,
+        "blockedCharge": false
+      }
+    ],
+    "terrain": {
+      "1,2": "wall",
+      "4,3": "wall",
+      "2,3": "blood",
+      "4,1": "blood",
+      "2,2": "blood",
+      "5,2": "blood",
+      "5,3": "blood",
+      "0,4": "blood"
+    },
+    "usedResolve": false,
+    "damageTaken": 0,
+    "actions": 1,
+    "history": []
+  },
+  "room": null,
+  "corpse": null,
+  "ending": null,
+  "meta": {
+    "deaths": 0,
+    "kills": 0,
+    "expeditions": 1,
+    "clears": 0,
+    "bestVigil": 0
+  },
+  "options": {
+    "sound": false,
+    "motion": true
+  },
+  "notice": "",
+  "lastSave": 0
+}

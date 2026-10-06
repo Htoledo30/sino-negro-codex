@@ -136,12 +136,13 @@ try {
     await page.locator('[data-modal="menu"]').first().tap();
     await page.locator('[data-update]').waitFor();
     assert.deepEqual((await campaignState(page)).combat, preserved.combat);
-    await page.locator('[data-update]').tap();
+    await Promise.all([page.waitForEvent('load'), page.locator('[data-update]').tap()]);
     await page.waitForFunction(
       async (expected) => (await caches.keys()).includes(expected),
       newCache,
     );
     await page.locator('.board').waitFor();
+    await page.waitForLoadState('networkidle');
     assert.deepEqual((await campaignState(page)).combat, preserved.combat);
     // WebKit Windows ne traite pas correctement l'émulation setOffline pour le SW.
     // Couper le serveur teste le vrai cache, sans dépendre de cette émulation.

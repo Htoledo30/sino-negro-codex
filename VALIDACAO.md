@@ -6,7 +6,7 @@ Windows, Node.js 24.15.0, Playwright 1.56.1. Chromium 141 e WebKit 26.0 fornecid
 
 ## Regras e integridade
 
-**23 testes de regras aprovados**, executados com `npm test`:
+**41 testes de regras aprovados**, executados com `npm test`:
 
 - Três origens, atributos, saves válidos e RNG reproduzível.
 - Entradas inválidas sem gasto de turno, vigor, recursos ou RNG.
@@ -25,15 +25,19 @@ Windows, Node.js 24.15.0, Playwright 1.56.1. Chromium 141 e WebKit 26.0 fornecid
 
 Correções encontradas pelos testes: referências circulares em cruzes de chefe; referências que deslocavam o centro de um ataque já anunciado; IA sem desvio de obstáculos; geração de inimigos isolados por abismos; prévias de dano que não consideravam quebra de armadura; rolagem horizontal no WebKit.
 
+Na expansão, os testes também cobrem os 15 encontros, caminhos até todos os objetivos, reconhecimento, vitória por âncoras sem abates fictícios, resgate e morte do prisioneiro, provisões únicas, ondas e saída do cerco, suporte e cura inimigos, detonação e correntes, as seis runas, cada ordem de companhia, contratos novos e gravação por arma. Um save gerado pelo código da versão efetivamente publicada é a fixture de migração: intenções, RNG, rotas e AP permanecem idênticos e a próxima jogada funciona.
+
+Correções da versão 2: aparo completo bloqueia os estados do golpe; inimigos sofrem dano ao permanecer no fogo e anunciam fuga quando possível; áreas de óleo sobrepostas não duplicam o impacto da mesma gravação; o modificador de cinzas afeta arenas autorais; batalhas longas não acumulam corpos sem limite; saves com intenções incompletas e identificadores herdados são rejeitados. O tabuleiro foi redimensionado e a explicação do objetivo tornou-se expansível para evitar a última fileira atrás da barra de ações.
+
 ## Campanhas completas no motor
 
 `npm run test:balance` usa um planejador tático que só executa as ações públicas do jogo. Nenhuma vida, selo, recompensa ou nível é injetado. Cada distrito passa por encode/decode do save. Resultado após os ajustes:
 
 | Origem   | Campanha               | Final            | Nível após Vigília | Turnos, incluindo Vigília | Vigília concluída |
 | -------- | ---------------------- | ---------------- | -----------------: | ------------------------: | ----------------: |
-| Guarda   | 4 distritos concluídos | Quebrar o sino   |                  8 |                       152 |                 1 |
-| Carrasco | 4 distritos concluídos | Prender ao peito |                  9 |                        85 |                 1 |
-| Herege   | 4 distritos concluídos | Quebrar o sino   |                  9 |                       153 |                 1 |
+| Guarda   | 4 distritos concluídos | Quebrar o sino   |                  9 |                       122 |                 1 |
+| Carrasco | 4 distritos concluídos | Prender ao peito |                  9 |                        80 |                 1 |
+| Herege   | 4 distritos concluídos | Quebrar o sino   |                  9 |                        88 |                 1 |
 
 Esse teste comprova acesso ao conteúdo e viabilidade das origens. Um planejador conhece as regras; esses números não são estimativas de dificuldade ou duração para jogadores humanos. O cenário de morte e recuperação foi exercitado separadamente.
 
@@ -58,7 +62,9 @@ O Playwright/WebKit do Windows apresentou erro interno ao usar sua emulação `s
 
 `npm run test:campaign-browser` concluiu uma campanha de Carrasco **no WebKit, usando somente os botões e alvos por toque**. O planejador consultou o save para escolher jogadas; cada mudança foi executada na interface. Seed determinística para reprodução.
 
-Resultado: três selos, quatro chefes, final “Prender o sino ao próprio peito”, retorno ao Ossuário e primeira Vigília vencida. **86 turnos, cinco expedições, nível 9**, sem erro JavaScript. O final permaneceu após recarregar. Capturas da escolha final e do desfecho em `test-results/`.
+Resultado da expansão: três selos, quatro chefes, final “Prender o sino ao próprio peito”, retorno ao Ossuário e primeira Vigília vencida. **79 turnos, cinco expedições, nível 9**, sem erro JavaScript. O final permaneceu após recarregar. Capturas da escolha final e do desfecho em `test-results/`.
+
+`npm run test:expansion-browser` passou em **Chromium e WebKit**. Exercita migração por importação, criação de runa, escolha de Mara e sua ordem no Arsenal, reconhecimento e terceira ação, rompimento das duas âncoras, resgate, provisões, saída de cerco, bestiário e recarga. Esses cenários isolados importam fixtures válidas para alcançar condições específicas; a campanha acima continua sem injeção de vida, recursos ou selos. Capturas de cada objetivo e da forja foram inspecionadas.
 
 ## Arquivos e comandos
 

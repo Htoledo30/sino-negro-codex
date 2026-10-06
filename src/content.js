@@ -1,5 +1,6 @@
 // Conteúdo independente do motor. Números, identidades e condições ficam explícitos.
-export const VERSION = 1;
+import { EXTRA_SKILLS, EXTRA_ENEMIES, EXTRA_CONTRACTS } from './expansion.js';
+export const VERSION = 2;
 export const GRID = 6;
 export const CLASSES = {
   guard: {
@@ -137,6 +138,7 @@ export const RELICS = {
   },
 };
 export const SKILLS = {
+  ...EXTRA_SKILLS,
   strike: {
     name: 'Cortar',
     icon: 'blade',
@@ -359,6 +361,7 @@ export const TALENTS = {
   },
 };
 export const ENEMIES = {
+  ...EXTRA_ENEMIES,
   husk: {
     name: 'Morto de vigília',
     glyph: 'husk',
@@ -544,6 +547,7 @@ export const MODIFIERS = [
   { id: 'ember', name: 'Chuva de cinza', desc: 'Mais óleo e fogo no terreno; espólios +30%.' },
 ];
 export const CONTRACTS = {
+  ...EXTRA_CONTRACTS,
   rescue: {
     name: 'Uma voz no poço',
     desc: 'Encontre e resgate Mara nas Valas. A boticária passa a vender bálsamos por menos.',

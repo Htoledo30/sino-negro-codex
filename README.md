@@ -2,6 +2,8 @@
 
 RPG tático de dark fantasy para jogar no iPhone como PWA. O sino de Véspera obriga os mortos a repetir o último desejo da cidade: sobreviver. Você atravessa as ruínas para conquistar três selos, abrir a Catedral e decidir o destino do sino.
 
+**Versão 2.0 — A Congregação:** a campanha agora inclui 15 formações escritas, seis layouts táticos, objetivos alternativos, seis runas e três companheiros. Saves da versão 1 migram automaticamente, inclusive durante um combate.
+
 Todo o gameplay e o salvamento funcionam no dispositivo. Não há backend, contas de jogo, compras, anúncios, chamadas de IA ou assets externos. A hospedagem privada pode exigir autenticação para o primeiro acesso; isso não faz parte do motor do jogo.
 
 ## Começar a jogar
@@ -40,10 +42,10 @@ Não há relógio real. Selecionar ações, abrir menus, consultar regras ou int
 
 ## Controles e decisões táticas
 
-- Cada turno começa com **duas ações**. Escolha a habilidade, toque no alvo e **confirme**. Custos e prévia de dano aparecem antes da confirmação.
+- Cada turno começa com **duas ações**; reconhecer a etapa concede três ações no primeiro turno do combate escolhido. Escolha a habilidade, toque no alvo e **confirme**. Custos e prévia de dano aparecem antes da confirmação.
 - **Vermelho** marca ataques anunciados e fixos. Mover-se, interromper ou aparar é a resposta. **Tracejado** marca destino de movimento inimigo.
 - **Encerrar turno** executa inimigos e recupera 3 vigor. Aguardar sem gastar ações recupera mais 2.
-- No celular, Mover, Atacar, Aparar, a habilidade de origem e Cura ficam na barra rápida. **Arsenal** dá acesso a todas as outras habilidades e explica seus efeitos.
+- No celular, Mover, Atacar, Aparar, a habilidade de origem e Cura ficam na barra rápida. **Interagir** substitui a habilidade de origem enquanto há objetos ativos. **Arsenal** dá acesso a todas as habilidades e à ordem da companhia, com explicações.
 - Toque em um inimigo para consultar vida, armadura, comportamento e intenção. Toque em terreno para consultar suas regras.
 - Ruptura e colisões cancelam intenções. Aparar prepara um Contra-ataque. Sangramento resolve antes das intenções e ignora armadura. Óleo + Brasa cria fogo conectado; empurrar no abismo mata imediatamente. Ataques de área podem atingir outros inimigos.
 
@@ -57,7 +59,24 @@ Três origens têm vida, vigor, arma, habilidade e talento inicial próprios:
 
 As árvores de Ferro, Sangue e Cinza podem ser misturadas. São **12 talentos**; alguns mudam regras e outros aprendem habilidades. Há **cinco armas**, três proteções e cinco relíquias equipáveis em um único espaço. Armas têm dano, alcance, custo e propriedades diferentes. Melhorias na forja aumentam dano; o contrato de caça abre a melhoria III.
 
-Quatro distritos têm terreno e inimigos próprios. Sete tipos de oportunidade produzem decisões sobre risco: confronto, caçada, vestígio, relicário, abrigo, contrabandista e guardião. Há **12 eventos escritos com três alternativas cada**, três contratos persistentes e quatro chefes com fases e padrões próprios.
+Quatro distritos têm terreno e inimigos próprios. Sete tipos de oportunidade produzem decisões sobre risco: confronto, caçada, vestígio, relicário, abrigo, contrabandista e guardião. Há **12 eventos escritos com três alternativas cada**, cinco contratos persistentes e quatro chefes com fases e padrões próprios.
+
+## A Congregação: novos caminhos no combate
+
+**Reconhecimento:** antes de escolher uma rota, gaste uma luz para revelar as formações de toda a etapa. O combate escolhido começa com três ações. O bônus pertence à etapa; não pode ser acumulado nem levado de um abrigo à etapa seguinte. Na escuridão, encontros ainda recebem um inimigo extra.
+
+**Objetivos:** os símbolos dourados no tabuleiro são alvos de Interagir, com alcance adjacente e custo de uma ação e um vigor. O painel explica a condição de vitória:
+
+- **Ritual:** rompa duas âncoras para encerrar a batalha com inimigos vivos e receber bônus, ou elimine todos. Não recebe experiência de inimigos que não matou.
+- **Resgate:** liberte o prisioneiro antes do último inimigo morrer. Ele tem 12 vida; áreas dos dois lados e fogo podem matá-lo. O resgate desbloqueia Ivo.
+- **Provisões:** recolha um bálsamo e uma bomba antes de encerrar o confronto.
+- **Cerco:** matar todos não encerra o encontro. Reforços chegam nos turnos 3 e 5. A partir do turno 6, use Interagir na saída, ou adjacente a ela, para escapar.
+
+**Formações:** 15 encontros combinam seis layouts — ruína, corredor, pira, ponte, cripta e altar. Portadores de lápides protegem aliados adjacentes contra dano físico; costureiras anunciam curas; penitentes detonam e morrem; arrastadores tornam o próximo deslocamento mais caro. Separar inimigos, interromper suporte, provocar fogo amigo ou correr para o objetivo produzem resultados diferentes.
+
+**Runas:** crie na forja com ossos, sucata e ícor. Cada arma guarda uma gravação; trocar uma runa conhecida entre confrontos é grátis. Fio de sangue aumenta Sangramento e custo de vigor; Sal de inverno reduz dano e cancela movimentos; Marca da pira incendeia uma cruz no golpe pesado; Boca de ferro troca dano por cura; Eco da sentinela reforça e interrompe no Contra-ataque; Nome queimado fortalece fogo e Dízimo, com mais Corrupção.
+
+**Companhia:** escolha uma pessoa no Ossuário, após seu contrato. Mara cura e limpa Sangramento; Ivo puxa e quebra armadura; Sibila rompe ritos, curas e invocações. Há uma ordem por combate, no Arsenal. Não há unidade aliada extra ocupando uma casa. Companhia e gravações ficam no Equipamento; o bestiário descoberto fica na Crônica.
 
 Os recursos se conectam:
 
@@ -75,6 +94,8 @@ Retirar-se entre confrontos deposita todos os espólios. A morte preserva experi
 Alcance a terceira etapa de uma nova expedição no mesmo distrito para recuperar o cadáver. Uma nova morte substitui o cadáver anterior. Descansar no Ossuário recupera vida e vigor e garante pelo menos dois bálsamos, gratuitamente: sempre há uma nova tentativa possível.
 
 O jogo usa localStorage após **toda ação aceita**, não só ao fechar. Guarda um save principal e uma cópia anterior, valida estrutura e checksum e informa falhas de gravação. Estado de combate, seed, rotas, recursos e intenções permanecem após recarregar. Não há rerrolagem por reload.
+
+O mesmo endereço aceita saves da versão 1, mantendo RNG, recursos, intenções, turnos e rotas em andamento. Os sistemas novos começam com valores neutros; Mara fica disponível se seu resgate já estava concluído. Abra o menu e use **Salvar e instalar atualização** quando uma versão nova estiver preparada. Não é necessário reiniciar a campanha.
 
 Pelo menu, **exporte** um `.json` e **importe** em outro dispositivo ou endereço. O armazenamento pertence ao endereço e ao contexto do navegador; se Safari e aplicativo instalado usarem contextos diferentes, exportação/importação permite transferir. O sistema pode apagar dados locais: a cópia exportada é independente desse armazenamento.
 
@@ -118,6 +139,7 @@ npm.cmd run test:balance
 npm.cmd run build
 npm.cmd run test:browser
 npm.cmd run test:campaign-browser
+npm.cmd run test:expansion-browser
 ```
 
 `browsers:install` guarda os runtimes Chromium/WebKit em `.browsers` dentro desta pasta. Os testes de navegador iniciam e encerram seus próprios servidores nas portas 4174 e 4175. Relatórios e capturas ficam em `test-results`. O registro de resultados e limites está em **VALIDACAO.md**.
