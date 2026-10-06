@@ -1,0 +1,23 @@
+{
+  "name": "sino-negro",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "RPG tático de expedições para iPhone, sem dependências de runtime",
+  "scripts": {
+    "dev": "node scripts/serve.mjs",
+    "start": "node scripts/serve.mjs",
+    "build": "node scripts/build.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "test:browser": "node tests/browser.mjs",
+    "test:balance": "node tests/campaign.mjs",
+    "test:campaign-browser": "node tests/browser-campaign.mjs",
+    "browsers:install": "node scripts/install-browsers.mjs",
+    "icons": "node scripts/icons.mjs",
+    "format": "prettier --write src scripts tests style.css index.html manifest.webmanifest package.json *.md"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.56.1",
+    "prettier": "3.6.2"
+  }
+}

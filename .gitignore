@@ -1,0 +1,9 @@
+node_modules/
+.browsers/
+test-results/
+.sites-runtime/
+*.tar.gz
+*.tar
+*.zip
+.env
+dist/
