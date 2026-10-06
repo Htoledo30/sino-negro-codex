@@ -410,3 +410,11 @@ test('identificadores herdados e intenções incompletas são rejeitados sem cor
     assert.equal(validateSave(s), false);
   }
 });
+test('falta de ícor identifica o material certo e não cobra ossos ou sucata', () => {
+  const s = createGame();
+  s.stash = { bones: 100, scrap: 30, ichor: 0 };
+  const r = act(s, { type: 'engrave', id: 'frost' });
+  assert.equal(r.ok, false);
+  assert.match(r.error, /ícor/);
+  assert.deepEqual(r.state.stash, s.stash);
+});

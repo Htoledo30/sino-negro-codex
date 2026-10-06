@@ -6,7 +6,7 @@ Windows, Node.js 24.15.0, Playwright 1.56.1. Chromium 141 e WebKit 26.0 fornecid
 
 ## Regras e integridade
 
-**41 testes de regras aprovados**, executados com `npm test`:
+**42 testes de regras aprovados**, executados com `npm test`:
 
 - Três origens, atributos, saves válidos e RNG reproduzível.
 - Entradas inválidas sem gasto de turno, vigor, recursos ou RNG.

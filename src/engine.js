@@ -174,7 +174,9 @@ export function price(s, kind) {
 }
 function pay(s, kind, n) {
   if (funds(s, kind) < n)
-    throw new Error(`Faltam ${n - funds(s, kind)} ${kind === 'bones' ? 'ossos' : 'sucatas'}.`);
+    throw new Error(
+      `Faltam ${n - funds(s, kind)} ${kind === 'bones' ? 'ossos' : kind === 'ichor' ? 'ícor' : 'sucatas'}.`,
+    );
   const c = currency(s),
     used = Math.min(c[kind], n);
   c[kind] -= used;
